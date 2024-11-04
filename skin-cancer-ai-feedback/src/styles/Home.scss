@@ -1,0 +1,32 @@
+$dark-blue: #001f4d;
+$purple: #5b00a8;
+$bright-purple: #8a00ff;
+$hover-purple: #b300ff;
+$white: #ffffff;
+
+.home {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  overflow-x: hidden;
+
+  &__title {
+    margin-top: 2rem;
+    text-transform: uppercase;
+    font-size: 28px;
+    text-align: center;
+  }
+}
+
+.accent-circle {
+  position: absolute;
+  background: rgba(91, 0, 168, 0.4);
+  border-radius: 50%;
+  filter: blur(50px);
+
+  // Example size and placement - adjust as needed
+  width: 10px;
+  height: 10px;
+  top: 10%;
+  left: 20%;
+}
