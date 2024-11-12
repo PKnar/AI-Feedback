@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./styles/App.scss";
 import Home from "./pages/Home";
 import {
@@ -18,6 +18,21 @@ function App() {
   const [predictions, setPredictions] = useState([]);
   const [selectedFile, setSelectedFile] = useState(null);
   const location = useLocation();
+
+  useEffect(() => {
+    const preventZoom = (event) => {
+      if (event.ctrlKey || event.metaKey) {
+        event.preventDefault();
+      }
+    };
+
+    window.addEventListener("wheel", preventZoom, { passive: false });
+
+    return () => {
+      window.removeEventListener("wheel", preventZoom);
+    };
+  }, []);
+
   return (
     <div className="App">
       <div className="glow"></div>

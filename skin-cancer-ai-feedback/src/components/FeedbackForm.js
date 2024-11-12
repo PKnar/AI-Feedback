@@ -1,4 +1,3 @@
-// frontend/src/components/FeedbackForm.js
 import React, { useState } from "react";
 import axios from "axios";
 import ImageUpload from "./FileUploader";

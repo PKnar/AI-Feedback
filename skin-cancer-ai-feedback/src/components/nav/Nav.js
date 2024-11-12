@@ -21,11 +21,11 @@ function Nav() {
 
   return (
     <div className="nav">
-      <h2> AI Skin Cancer Detector</h2>
+      <h3> AI Skin Cancer Detector</h3>
 
       <button onClick={(e) => navigate("/")}>
         {" "}
-        <Upload size={18} style={{ marginRight: "1rem" }} /> Upload
+        <Upload size={15} style={{ marginRight: "1rem" }} /> Upload
       </button>
       {/* <ul>
         {MENU_LINKS.map(({ path, name, icon }) => {

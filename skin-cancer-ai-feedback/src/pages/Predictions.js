@@ -1,9 +1,10 @@
-import React, { useState } from "react";
 import axios from "axios";
-import FileUploader from "../components/FileUploader";
-import BoundingBoxAnnotator from "../components/BoundingBoxAnnotator";
-import { Rnd } from "react-rnd";
+import React, { useState } from "react";
+import ImageWithBoundingBoxes from "../components/ImageWithBoundingBoxes";
 import "../styles/Predictions.scss";
+import FeedbackActions from "../components/FeedbackActions";
+import LeftPanel from "../components/LeftPanel";
+import { ThumbsDown, ThumbsUp } from "lucide-react";
 
 function Predictions({
   predictions,
@@ -12,51 +13,52 @@ function Predictions({
   selectedFile,
 }) {
   const [agree, setAgree] = useState(false);
-  const [annotation, setAnnotation] = useState("");
   const [comment, setComment] = useState("");
+  const [showBoxOptions, setShowBoxOptions] = useState(false);
+  const [disagree, setDisagree] = useState(false);
+  const [label, setLabel] = useState("");
+  const [selectedBoxIndex, setSelectedBoxIndex] = useState();
 
-  const handleAddBox = () => {
+  const [showLabelPopup, setShowLabelPopup] = useState(false);
+
+  const originalWidth = 2048;
+  const originalHeight = 1536;
+
+  const wrapperWidth = 700;
+  const scaleFactor = wrapperWidth / originalWidth;
+
+  const handleAddBox = (label) => {
     setPredictions([
       ...predictions,
-      { x: 50, y: 50, width: 100, height: 100, label: "new" },
+      { x_center: 500, y_center: 500, width: 100, height: 100, label: label },
     ]);
+
+    console.log("new predictions", predictions);
   };
 
   const handleDeleteBox = (index) => {
     setPredictions(predictions.filter((_, i) => i !== index));
   };
 
-  const handleDragStop = (index, e, d) => {
+  const handleUpdateBox = (index, newBox) => {
+    console.log(newBox, "neww box");
+    console.log("dragging");
     const updatedPredictions = [...predictions];
-    updatedPredictions[index].x = d.x;
-    updatedPredictions[index].y = d.y;
+    updatedPredictions[index] = newBox;
     setPredictions(updatedPredictions);
   };
 
-  const handleResizeStop = (index, e, direction, ref, delta, position) => {
-    const updatedPredictions = [...predictions];
-    updatedPredictions[index] = {
-      ...updatedPredictions[index],
-      width: parseInt(ref.style.width),
-      height: parseInt(ref.style.height),
-      ...position,
-    };
-    setPredictions(updatedPredictions);
-  };
-
-  // Save data to backend
   const handleSave = async () => {
     const saveData = {
       filename: selectedFile.name,
       boxes: predictions.map((box) => ({
-        x_center: (box.x + box.width / 2) / 400,
-        y_center: (box.y + box.height / 2) / 400,
-        width: box.width / 400,
-        height: box.height / 400,
+        x_center: box.x_center / originalWidth,
+        y_center: box.y_center / originalHeight,
+        width: box.width / originalWidth,
+        height: box.height / originalHeight,
         label: box.label,
       })),
       agree,
-      annotation,
       comment,
     };
 
@@ -68,111 +70,111 @@ function Predictions({
     }
   };
 
+  const handleAgreeChange = (isAgree) => {
+    setAgree(isAgree);
+    setShowBoxOptions(!isAgree);
+  };
+
   return (
     <div className="predictions">
+      <LeftPanel
+        agree={agree}
+        setAgree={setAgree}
+        setDisagree={setDisagree}
+        setShowBoxOptions={setShowBoxOptions}
+        handleAgreeChange={handleAgreeChange}
+        predictions={predictions}
+        selectedBoxIndex={selectedBoxIndex}
+        setSelectedBoxIndex={setSelectedBoxIndex}
+      />
       <div>
-        <h2 className="predictions__title">Predictions</h2>
-
-        {imagePreview && (
-          <div
-            style={{
-              position: "relative",
-              display: "inline-block",
-              marginTop: "20px",
-            }}
-          >
-            <img
-              src={imagePreview}
-              alt="Preview"
-              className="prediction-image"
-            />
-            {predictions.map((box, index) => (
-              <Rnd
-                key={index}
-                size={{ width: box.width, height: box.height }}
-                position={{ x: box.x, y: box.y }}
-                onDragStop={(e, d) => handleDragStop(index, e, d)}
-                onResizeStop={(e, direction, ref, delta, position) =>
-                  handleResizeStop(index, e, direction, ref, delta, position)
-                }
-                bounds="parent"
-                style={{ border: "2px solid red", position: "absolute" }}
+        {/* ------------Agree Disagree---------- */}
+        <div className="agree-disagree">
+          {!agree && <p className="question">Do you agree with AI results?</p>}
+          {agree && (
+            <p className="question">
+              Thank you for feedback <br></br>{" "}
+              <span
+                style={{
+                  color: "grey",
+                }}
               >
-                <div
-                  style={{
-                    position: "relative",
-                    width: "100%",
-                    height: "100%",
-                  }}
-                >
-                  <button
-                    style={{
-                      position: "absolute",
-                      top: -20,
-                      right: -20,
-                      background: "red",
-                      color: "white",
-                      borderRadius: "50%",
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleDeleteBox(index)}
-                  >
-                    X
-                  </button>
-                  <span
-                    style={{
-                      color: "white",
-                      backgroundColor: "black",
-                      padding: "2px",
-                    }}
-                  >
-                    {box.label}
-                  </span>
-                </div>
-              </Rnd>
-            ))}
+                You agreed with the results
+              </span>
+            </p>
+          )}
+          <div className="buttons">
+            <button
+              className={`feedback-button agree ${agree ? "green" : ""}`}
+              onClick={() => {
+                setDisagree(false);
+                handleAgreeChange(true);
+              }}
+            >
+              <ThumbsUp size={18} style={{ marginRight: "0.5rem" }} /> Yes
+            </button>
+
+            <button
+              className={`feedback-button disagree ${disagree ? "red" : ""}`}
+              onClick={() => {
+                setAgree(false);
+                setDisagree(true);
+                handleAgreeChange(false);
+              }}
+            >
+              <ThumbsDown size={18} style={{ marginRight: "0.5rem" }} /> No,
+              Needs Improvement
+            </button>
           </div>
+
+          {/* {agree && (
+            <button
+              style={{
+                textAlign: "center",
+                width: "200px",
+                padding: "1rem",
+                backgroundColor: "transparent",
+                color: "white",
+                cursor: "pointer",
+                border: "0.5px solid white",
+              }}
+              onClick={(e) => {
+                setAgree(false);
+                setShowBoxOptions(true);
+              }}
+            >
+              Change
+            </button>
+          )} */}
+        </div>
+        {imagePreview && (
+          <ImageWithBoundingBoxes
+            imageUrl={imagePreview}
+            predictions={predictions}
+            scaleFactor={scaleFactor}
+            wrapperWidth={wrapperWidth}
+            originalHeight={originalHeight}
+            originalWidth={originalWidth}
+            handleDeleteBox={handleDeleteBox}
+            handleUpdateBox={handleUpdateBox}
+            selectedBoxIndex={selectedBoxIndex}
+          />
         )}
-
-        <button onClick={handleAddBox}>Add New Box</button>
-        <button onClick={handleSave}>Save Annotations</button>
-        {/* Agree Checkbox */}
-        <div style={{ marginTop: "20px" }}>
-          <label>
-            <input
-              type="checkbox"
-              checked={agree}
-              onChange={(e) => setAgree(e.target.checked)}
-            />
-            Agree
-          </label>
-        </div>
-
-        {/* Annotation Input */}
-        <div style={{ marginTop: "10px" }}>
-          <label>
-            Annotation:
-            <input
-              type="text"
-              value={annotation}
-              onChange={(e) => setAnnotation(e.target.value)}
-              style={{ marginLeft: "10px", width: "200px" }}
-            />
-          </label>
-        </div>
-
-        {/* Comment Input */}
-        <div style={{ marginTop: "10px" }}>
-          <label>
-            Comment:
-            <textarea
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              style={{ marginLeft: "10px", width: "200px", height: "60px" }}
-            />
-          </label>
-        </div>
       </div>
+
+      <FeedbackActions
+        setAgree={setAgree}
+        setComment={setComment}
+        agree={agree}
+        comment={comment}
+        handleAddBox={handleAddBox}
+        handleSave={handleSave}
+        handleAgreeChange={handleAgreeChange}
+        showBoxOptions={showBoxOptions}
+        setLabel={setLabel}
+        showLabelPopup={showLabelPopup}
+        setShowLabelPopup={setShowLabelPopup}
+      />
     </div>
   );
 }

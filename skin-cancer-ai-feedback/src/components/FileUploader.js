@@ -1,4 +1,3 @@
-// frontend/src/components/ImageUploader.js
 import React, { useState } from "react";
 import axios from "axios";
 
@@ -41,13 +40,13 @@ function ImageUploader({
       );
 
       const fetchedPredictions = response.data.predictions.map((box) => {
-        console.log(box);
         return {
-          x: box.x_center,
-          y: box.y_center,
+          x_center: box.x_center,
+          y_center: box.y_center,
           width: box.width,
           height: box.height,
           label: box.label,
+          confidence: box.confidence,
         };
       });
       setPredictions(fetchedPredictions);

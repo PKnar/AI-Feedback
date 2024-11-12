@@ -6,46 +6,41 @@ import FileItem from "./fileItem";
 const FileUploader = () => {
   const [files, setFiles] = useState([]);
 
-  // Base upload speed (bytes per millisecond)
-  const UPLOAD_SPEED = 5000; // 5 KB/ms (adjust as needed)
+  const UPLOAD_SPEED = 5000;
 
-  // Function to simulate file upload progress
   const simulateUpload = (file, uniqueId) => {
-    // Calculate the estimated upload duration based on file size
-    const totalDuration = file.size / UPLOAD_SPEED; // Duration in ms based on file size
-    const updateInterval = 100; // Interval in ms to update progress
-    const progressIncrement = 100 / (totalDuration / updateInterval); // Calculate progress increment per interval
+    const totalDuration = file.size / UPLOAD_SPEED;
+    const updateInterval = 100;
+    const progressIncrement = 100 / (totalDuration / updateInterval);
 
     const interval = setInterval(() => {
       setFiles((prevFiles) => {
         return prevFiles.map((f) => {
           if (f.id === uniqueId) {
-            // Update progress for the specific file by ID
             const newProgress = f.progress + progressIncrement;
             if (newProgress >= 100) {
-              clearInterval(interval); // Stop updating once we reach 100%
+              clearInterval(interval);
               return { ...f, progress: 100, status: "completed" };
             }
             return { ...f, progress: newProgress };
           }
-          return f; // Return other files unchanged
+          return f;
         });
       });
-    }, updateInterval); // Set interval to periodically update progress
+    }, updateInterval);
   };
 
   const handleFileSelect = (e) => {
-    const selectedFiles = Array.from(e.target.files).slice(0, 4 - files.length); // Limit to 4 files
+    const selectedFiles = Array.from(e.target.files).slice(0, 4 - files.length);
     const newFiles = selectedFiles.map((file) => ({
-      id: Math.random().toString(36).substr(2, 9), // Unique ID for each file
+      id: Math.random().toString(36).substr(2, 9),
       file,
       progress: 0,
-      status: "uploading", // Initial status
+      status: "uploading",
     }));
 
     setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
-    // Start simulated upload for each new file
     newFiles.forEach((file) => simulateUpload(file.file, file.id));
   };
 

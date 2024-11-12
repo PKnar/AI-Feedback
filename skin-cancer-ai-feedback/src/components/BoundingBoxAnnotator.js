@@ -1,4 +1,3 @@
-// frontend/src/components/BoundingBoxCanvas.js
 import React from "react";
 import { Stage, Layer, Rect } from "react-konva";
 
