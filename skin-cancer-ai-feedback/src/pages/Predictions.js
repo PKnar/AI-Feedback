@@ -5,6 +5,7 @@ import "../styles/Predictions.scss";
 import FeedbackActions from "../components/FeedbackActions";
 import LeftPanel from "../components/LeftPanel";
 import { ThumbsDown, ThumbsUp } from "lucide-react";
+import { API_URL, URL } from "../Constants";
 
 function Predictions({
   predictions,
@@ -24,7 +25,7 @@ function Predictions({
   const originalWidth = 2048;
   const originalHeight = 1536;
 
-  const wrapperWidth = 700;
+  const wrapperWidth = 800;
   const scaleFactor = wrapperWidth / originalWidth;
 
   const handleAddBox = (label) => {
@@ -63,7 +64,7 @@ function Predictions({
     };
 
     try {
-      await axios.post("http://localhost:8000/api/feedback/save", saveData);
+      await axios.post(`${API_URL}/api/feedback/save`, saveData);
       alert("Data saved successfully!");
     } catch (error) {
       console.error("Error saving data:", error);

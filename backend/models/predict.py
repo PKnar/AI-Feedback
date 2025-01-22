@@ -3,7 +3,7 @@ import sys
 import json
 from PIL import Image
 
-# Load the YOLOv5 model
+
 model = torch.hub.load('ultralytics/yolov5', 'custom', path='backend/models/best.pt')
 
 def predict(image_path):
@@ -27,25 +27,5 @@ if __name__ == '__main__':
 
 
 
-# backend/models/predict.py
-# import sys
-# import json
 
-# def predict(image_path):
-  
-#     predictions = [
-#         {
-#             'x_center': 0.5,
-#             'y_center': 0.5,
-#             'width': 0.2,
-#             'height': 0.2,
-#             'confidence': 0.9,
-#             'label': 'bcc'
-#         }
-#     ]
-#     return json.dumps(predictions)
-
-# if __name__ == '__main__':
-#     image_path = sys.argv[1]
-#     print(predict(image_path))
 

@@ -21,7 +21,7 @@ function Nav() {
 
   return (
     <div className="nav">
-      <h3> AI Skin Cancer Detector</h3>
+      <h4> AI Skin Cancer Detector</h4>
 
       <button onClick={(e) => navigate("/")}>
         {" "}

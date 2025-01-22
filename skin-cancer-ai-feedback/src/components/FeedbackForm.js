@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import ImageUpload from "./FileUploader";
 import BoundingBoxCanvas from "./BoundingBoxAnnotator";
+import { API_URL } from "../Constants";
 
 function FeedbackForm() {
   const [imageUrl, setImageUrl] = useState(null);
@@ -16,7 +17,7 @@ function FeedbackForm() {
   const handleSubmit = async () => {
     const feedback = { agree, comment, boundingBoxes: boxes };
     try {
-      await axios.post("http://localhost:8000/api/feedback", feedback);
+      await axios.post(`${API_URL}/api/feedback`, feedback);
       alert("Feedback submitted successfully");
     } catch (error) {
       console.error("Error submitting feedback:", error);

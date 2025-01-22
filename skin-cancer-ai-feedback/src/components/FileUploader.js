@@ -4,6 +4,7 @@ import axios from "axios";
 import DragDrop from "./DragDrop";
 import { useNavigate } from "react-router-dom";
 import NeonLoading from "./NeoLoading";
+import { API_URL } from "../Constants";
 
 function ImageUploader({
   imagePreview,
@@ -32,7 +33,7 @@ function ImageUploader({
 
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/feedback/predict",
+        `${API_URL}/api/feedback/predict`,
         formData,
         {
           headers: { "Content-Type": "multipart/form-data" },

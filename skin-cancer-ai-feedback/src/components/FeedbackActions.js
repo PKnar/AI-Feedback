@@ -32,7 +32,7 @@ function FeedbackActions({
     <div className="feedback-actions">
       {showBoxOptions && (
         <div>
-          <div
+          {/* <div
             style={{
               margin: "1rem",
 
@@ -43,12 +43,12 @@ function FeedbackActions({
             <p>
               Use feedback tools to give feedback to the AI prediction results
             </p>
-          </div>
+          </div> */}
 
           <div
             style={{
-              margin: "1rem",
-              borderTop: "0.5px solid grey",
+              marginTop: "2rem",
+              // borderTop: "0.5px solid grey",
             }}
           >
             <h3
